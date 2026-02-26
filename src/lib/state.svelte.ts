@@ -1,4 +1,5 @@
 import type { Item } from "./item.svelte";
+import type { AnyDisplay } from "./display/display.svelte";
 
 export enum AppState {
   LAUNCHER = "LAUNCHER",
@@ -16,7 +17,41 @@ export enum Location {
 }
 
 export const gameState = $state({
-  display: Display.INFO_DISPLAY,
+  display: {
+    type: "info",
+    title: "Tutorial",
+    content: "To start, please press the button bellow",
+    onContinue: () => {
+      gameState.display = {
+        type: "multiple_choice",
+        title: "Do you like pineapple on pizza?",
+        options: [
+          {
+            text: "Yes.",
+            onSelect: () => {
+              gameState.display = {
+                type: "info",
+                title: "Yes, yes!",
+                content: "You have good taste my friend",
+                onContinue: () => {},
+              };
+            },
+          },
+          {
+            text: "No.",
+            onSelect: () => {
+              gameState.display = {
+                type: "info",
+                title: "What is wrong with you?",
+                content: "You are a monster...",
+                onContinue: () => {},
+              };
+            },
+          },
+        ],
+      };
+    },
+  } as AnyDisplay,
   daysSurvived: 0,
   turn: 0,
   health: 100,
