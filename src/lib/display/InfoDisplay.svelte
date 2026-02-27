@@ -1,8 +1,9 @@
 <script>
-    let { title, onContinue } = $props();
+    let { title, description, onContinue } = $props();
 </script>
 
 <main>
-    <p>{title}</p>
+    <h2>{@html title}</h2>
+    <p>{@html description}</p>
     <button onclick={onContinue}>Continue</button>
 </main>

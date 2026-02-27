@@ -1,10 +1,11 @@
 <script>
-    let { title, options } = $props();
+    let { title, description, options } = $props();
 </script>
 
 <main>
-    <p>{title}</p>
+    <h2>{@html title}</h2>
+    <p>{@html description}</p>
     {#each options as option}
-        <button onclick={option.onSelect}>{option.text}</button>
+        <button onclick={option.onSelect}>{@html option.text}</button>
     {/each}
 </main>
