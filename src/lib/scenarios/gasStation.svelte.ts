@@ -172,6 +172,7 @@ function exitOrStayTheNight() {
       {
         text: "Stay",
         onSelect: () => {
+          gameState.daysSurvived += 1;
           gameState.display = {
             type: "info",
             title: "1 Day later",
