@@ -25,11 +25,7 @@ export interface DiceDisplay extends IDisplay {
   type: "dice";
   title: string;
   description: string;
-  pool: Array<{
-    min: number;
-    max: number;
-    function: () => void;
-  }>;
+  onRoll: (dice: number) => void;
 }
 
 export type AnyDisplay = MultipleChoiceDisplay | InfoDisplay | DiceDisplay;
