@@ -1,5 +1,5 @@
 <script lang="ts">
-    export let onPlay: () => void;
+    let { onPlay }: { onPlay: () => void } = $props();
 </script>
 
 <button onclick={onPlay}>Launch</button>

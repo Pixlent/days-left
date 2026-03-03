@@ -9,3 +9,7 @@ export class Sword implements Item {
 export class Potato implements Item {
   name = "Potato";
 }
+
+export class Croissant implements Item {
+  name = "Croissant";
+}

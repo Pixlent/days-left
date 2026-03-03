@@ -1,4 +1,4 @@
-export type DisplayType = "multiple_choice" | "info" | "dice";
+export type DisplayType = "multiple_choice" | "info" | "d20" | "d6";
 
 export interface IDisplay {
   type: DisplayType;
@@ -6,14 +6,12 @@ export interface IDisplay {
 
 export interface InfoDisplay extends IDisplay {
   type: "info";
-  title: string;
   description: string;
   onContinue: () => void;
 }
 
 export interface MultipleChoiceDisplay extends IDisplay {
   type: "multiple_choice";
-  title: string;
   description: string;
   options: Array<{
     text: string;
@@ -21,11 +19,20 @@ export interface MultipleChoiceDisplay extends IDisplay {
   }>;
 }
 
-export interface DiceDisplay extends IDisplay {
-  type: "dice";
-  title: string;
+export interface D20Display extends IDisplay {
+  type: "d20";
   description: string;
   onRoll: (dice: number) => void;
 }
 
-export type AnyDisplay = MultipleChoiceDisplay | InfoDisplay | DiceDisplay;
+export interface D6Display extends IDisplay {
+  type: "d6";
+  description: string;
+  onRoll: (die: number) => void;
+}
+
+export type AnyDisplay =
+  | MultipleChoiceDisplay
+  | InfoDisplay
+  | D20Display
+  | D6Display;
