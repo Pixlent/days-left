@@ -1,5 +1,7 @@
-import type { Item } from "./item.svelte";
-import type { IDisplay, DiceDisplay } from "./display/display.svelte";
+import type { IDisplay, InfoDisplay } from "./display/display.svelte";
+import { ChocolateBar, WaterBottle, type Item } from "./item.svelte";
+import { cabin } from "./scenarios/cabin.svelte";
+import { nextScenario } from "./scenarios/common.svelte";
 import { gasStation } from "./scenarios/gasStation.svelte";
 
 export enum AppState {
@@ -13,20 +15,64 @@ export enum Display {
 }
 
 export enum Location {
+  GAS_STATION,
   PHARMACY,
   HOUSE,
 }
 
+const intro = {
+  type: "info",
+  description:
+    "You have been put into the middle of a zombie apocalypse, and only have a bottle of water and a chocolate bar. You'll walk around, scavenge for food and fight zombies. Your objective is to survive as many days as possible; this is your score. Good luck!",
+  onContinue: () => {
+    gameState.display = nextScenario();
+  },
+} as InfoDisplay;
+
 export const gameState = $state({
-  display: gasStation as IDisplay,
+  display: intro as IDisplay,
   daysSurvived: 0,
-  turn: 0,
   health: 100,
-  inventory: [] as Item[],
-  location: Location.HOUSE,
+  thirst: 100,
+  hunger: 100,
+  inventory: [new WaterBottle(), new ChocolateBar()] as Item[],
+  location: Location.GAS_STATION,
 });
 
-export function nextTurn() {
-  gameState.turn += 1;
-  if (Math.random() > 0.6) gameState.daysSurvived += 1;
+export function nextDay() {
+  gameState.daysSurvived += 1;
+  hydrate((Math.random() * 20 + 30) * -1);
+  eat((Math.random() * 20 + 20) * -1);
+}
+
+export function die() {
+  gameState.display = {
+    type: "info",
+    description:
+      "You died. You ended up surviving " + gameState.daysSurvived + " days.",
+    onContinue: () => {
+      gameState.display = gasStation;
+    },
+  } as InfoDisplay;
+}
+
+export function heal(amount: number) {
+  gameState.health += amount;
+  if (gameState.health > 100) {
+    gameState.health = 100;
+  }
+}
+
+export function hydrate(amount: number) {
+  gameState.thirst += amount;
+  if (gameState.health > 100) {
+    gameState.thirst = 100;
+  }
+}
+
+export function eat(amount: number) {
+  gameState.hunger += amount;
+  if (gameState.hunger > 100) {
+    gameState.hunger = 100;
+  }
 }

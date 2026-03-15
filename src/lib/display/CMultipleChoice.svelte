@@ -1,10 +1,23 @@
 <script>
+    import Button from "../ui/Button.svelte";
+
     let { description, options } = $props();
 </script>
 
-<main>
+<div class="content">
     <p>{@html description}</p>
-    {#each options as option}
-        <button onclick={option.onSelect}>{@html option.text}</button>
-    {/each}
-</main>
+    <div class="buttons">
+        {#each options as option}
+            <Button onclick={option.onSelect}>{@html option.text}</Button>
+        {/each}
+    </div>
+</div>
+
+<style>
+    @import "./componentStyles.css";
+    .buttons {
+        display: flex;
+        flex-direction: row;
+        gap: 5px;
+    }
+</style>

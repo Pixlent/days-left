@@ -1,4 +1,6 @@
 <script lang="ts">
+    import Button from "../ui/Button.svelte";
+
     let { description, onRoll } = $props();
     let dieResult = $state(0);
     let rolled = $state(false);
@@ -24,13 +26,26 @@
     }
 </script>
 
-<main>
+<div class="content">
     {#if !rolled}
-        <p>{@html description}</p>
-        <button onclick={roll}>Roll</button>
+        <p class="content-box">{@html description}</p>
+        <Button onclick={roll}>Roll</Button>
     {:else}
-        <p>You rolled {dieResult}</p>
-        <img alt="A d6 landing on {dieResult}" src={getDieImage()} />
-        <button onclick={onContinue}>Continue</button>
+        <p>You rolled</p>
+        <img
+            alt="A d6 landing on {dieResult}"
+            src={getDieImage()}
+            fetchpriority="high"
+        />
+        <Button onclick={onContinue}>Continue</Button>
     {/if}
-</main>
+</div>
+
+<style>
+    @import "./componentStyles.css";
+    img {
+        width: 10vw;
+        height: 10vh;
+        margin: 15px;
+    }
+</style>

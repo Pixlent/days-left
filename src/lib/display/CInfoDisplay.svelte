@@ -1,8 +1,14 @@
 <script>
+    import Button from "../ui/Button.svelte";
+
     let { description, onContinue } = $props();
 </script>
 
-<main>
+<div class="content">
     <p>{@html description}</p>
-    <button onclick={onContinue}>Continue</button>
-</main>
+    <Button onclick={onContinue}>Continue</Button>
+</div>
+
+<style>
+    @import "./componentStyles.css";
+</style>

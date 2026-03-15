@@ -8,10 +8,6 @@
     function goToGame() {
         currentState = AppState.GAME;
     }
-
-    function goToLauncher() {
-        currentState = AppState.LAUNCHER;
-    }
 </script>
 
 <main>

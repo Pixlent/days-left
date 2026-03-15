@@ -1,11 +1,17 @@
 import type {
   InfoDisplay,
   MultipleChoiceDisplay,
-  D20Display,
   D6Display,
 } from "../display/display.svelte";
-import { Croissant, Potato } from "../item.svelte";
-import { gameState } from "../state.svelte";
+import {
+  ChocolateBar,
+  CondensedMilk,
+  GranolaBar,
+  OrangeSoda,
+  SaltyCrackers,
+} from "../item.svelte";
+import { die, gameState, nextDay } from "../state.svelte";
+import { exit, exitOrStayTheNight, youFound } from "./common.svelte";
 
 export const gasStation = {
   type: "info",
@@ -31,61 +37,63 @@ function intro() {
   } as MultipleChoiceDisplay;
 }
 
-function exit() {
-  gameState.display = {
-    type: "info",
-    description: "You have finished the first scenario",
-    onContinue: () => {
-      gameState.display = gasStation;
-    },
-  } as InfoDisplay;
-}
-
 function lookForFood() {
   let random = Math.random();
   if (random < 0.4) {
     zombieEncounter();
   } else if (random < 0.7) {
-    freezer();
+    dairyIsle();
   } else {
-    bakedGoods();
+    snackAisle();
   }
 }
 
-function freezer() {
+function dairyIsle() {
   gameState.display = {
     type: "d6",
     description:
-      "You discover a freezer. You need to roll a die to decide what you find",
+      "You discover the dairy isle. You need to roll a die to decide what you find",
     onRoll: (dice) => {
       for (let i = 0; i < dice; i++) {
-        gameState.inventory.push(new Potato());
+        gameState.inventory.push(new CondensedMilk());
       }
       gameState.display = {
         type: "info",
         title: "Result",
         description: `You ended up finding ${dice} potato(es)`,
-        onContinue: exitOrStayTheNight,
+        onContinue: () => {
+          exitOrStayTheNight(exit);
+        },
       } as InfoDisplay;
     },
   } as D6Display;
 }
 
-function bakedGoods() {
+function snackAisle() {
   gameState.display = {
     type: "d6",
     description:
-      "You discover the baked goods section. You need to roll a die to decide what you find",
+      "You discover the snack aisle. You need to roll a die to decide what you find",
     onRoll: (dice) => {
-      for (let i = 0; i < dice; i++) {
-        gameState.inventory.push(new Croissant());
+      if (dice < 2) {
+        gameState.display = {
+          type: "info",
+          title: "Result",
+          description: "There was no food to be found.",
+          onContinue: () => {
+            exitOrStayTheNight(exit);
+          },
+        } as InfoDisplay;
+      } else if (dice < 4) {
+        gameState.inventory.push(new GranolaBar());
+        youFound(new GranolaBar());
+      } else if (dice < 5) {
+        gameState.inventory.push(new SaltyCrackers());
+        youFound(new SaltyCrackers());
+      } else if (dice <= 6) {
+        gameState.inventory.push(new ChocolateBar());
+        youFound(new ChocolateBar());
       }
-      gameState.display = {
-        type: "info",
-        title: "Result",
-        description: `You ended up finding ${dice} croissants`,
-        onContinue: exitOrStayTheNight,
-      } as InfoDisplay;
     },
   } as D6Display;
 }
@@ -110,28 +118,28 @@ function zombieEncounter() {
 
 function fightZombie() {
   gameState.display = {
-    type: "d20",
+    type: "d6",
     description:
-      "You need to roll a dice to figure out whether or not you survive the encounter",
+      "You need to roll a die to figure out whether or not you survive the encounter",
     onRoll: (dice) => {
-      if (dice < 5) {
+      if (dice <= 1) {
         die();
         return;
-      } else if (dice <= 15) {
-        gameState.health -= 15 - (dice - 5);
+      } else if (dice <= 5) {
+        gameState.health -= dice * 7;
       }
-      exitOrStayTheNight();
+      exitOrStayTheNight(exit);
     },
-  } as D20Display;
+  } as D6Display;
 }
 
 function hideFromZombie() {
   gameState.display = {
-    type: "d20",
+    type: "d6",
     description:
       "You need to roll a die to figure out whether or not you succeed at hiding",
     onRoll: (dice) => {
-      if (dice < 8) {
+      if (dice <= 2) {
         die();
         return;
       }
@@ -139,45 +147,10 @@ function hideFromZombie() {
         type: "info",
         description:
           "You sneaked your way around the zombie without being noticed",
-        onContinue: exitOrStayTheNight,
+        onContinue: () => {
+          exitOrStayTheNight(exit);
+        },
       } as InfoDisplay;
     },
-  } as D20Display;
-}
-
-function die() {
-  gameState.display = {
-    type: "info",
-    description:
-      "You died. You ended up surviving " + gameState.daysSurvived + " days.",
-    onContinue: () => {
-      gameState.display = gasStation;
-    },
-  } as InfoDisplay;
-}
-
-function exitOrStayTheNight() {
-  gameState.display = {
-    type: "multiple_choice",
-    description:
-      "You've searched everything, and can leave. Do you stay the night, or exit?",
-    options: [
-      {
-        text: "Stay",
-        onSelect: () => {
-          gameState.daysSurvived += 1;
-          gameState.display = {
-            type: "info",
-            description:
-              "You ended up staying a night, and nothing bad happened :)",
-            onContinue: exitOrStayTheNight,
-          } as InfoDisplay;
-        },
-      },
-      {
-        text: "Exit",
-        onSelect: exit,
-      },
-    ],
-  } as MultipleChoiceDisplay;
+  } as D6Display;
 }
