@@ -14,6 +14,10 @@ export function isConsumable(obj: any): obj is Consumable {
   );
 }
 
+export class LockPick implements Item {
+  name = "Lock Pick";
+}
+
 export class Axe implements Item {
   name = "Axe";
 }
@@ -35,6 +39,7 @@ export class ChocolateBar implements Item, Consumable {
 export class CondensedMilk implements Item, Consumable {
   consume(): void {
     eat(Math.random() * 50 + 40);
+    hydrate(Math.random() * 20 + 20);
   }
   name = "Condensed Milk";
 }

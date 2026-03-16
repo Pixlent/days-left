@@ -23,6 +23,8 @@
                                 gameState.inventory.splice(index, 1);
                             }}>Consume</Button
                         >
+                    {:else}
+                        <td></td>
                     {/if}
                     <td>{item.name}</td>
                 </tr>

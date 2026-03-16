@@ -32,26 +32,36 @@ function intro() {
 }
 
 function enter() {
-  gameState.display = {
-    type: "d6",
-    description:
-      "The door is locked, but you can attempt to lockpick it. You need to roll a 5 or higher to enter",
-    onRoll: (die) => {
-      if (die > 4) {
+  if (
+    gameState.inventory.some((item) => item.name && item.name === "Lock Pick")
+  ) {
+    gameState.display = {
+      type: "d6",
+      description:
+        "The door is locked, but you can attempt to lockpick it. You need to roll a 5 or higher to enter",
+      onRoll: (die) => {
+        if (die > 4) {
+          gameState.display = {
+            type: "info",
+            description: "You enter the cabin and discover a bed",
+            onContinue: bed,
+          } as InfoDisplay;
+          return;
+        }
         gameState.display = {
           type: "info",
-          description: "You enter the cabin and discover a bed",
-          onContinue: bed,
+          description: "You weren't able to unlock the door",
+          onContinue: exit,
         } as InfoDisplay;
-        return;
-      }
-      gameState.display = {
-        type: "info",
-        description: "You weren't able to unlock the door",
-        onContinue: exit,
-      } as InfoDisplay;
-    },
-  } as D6Display;
+      },
+    } as D6Display;
+  } else {
+    gameState.display = {
+      type: "info",
+      description: "The door was locked",
+      onContinue: exit,
+    } as InfoDisplay;
+  }
 }
 
 function bed() {

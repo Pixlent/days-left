@@ -7,8 +7,10 @@ import {
   ChocolateBar,
   CondensedMilk,
   GranolaBar,
+  LockPick,
   OrangeSoda,
   SaltyCrackers,
+  WaterBottle,
 } from "../item.svelte";
 import { die, gameState, nextDay } from "../state.svelte";
 import { exit, exitOrStayTheNight, youFound } from "./common.svelte";
@@ -23,10 +25,10 @@ function intro() {
   gameState.display = {
     type: "multiple_choice",
     description:
-      "You have been faced with the choice of looking for food or exiting the gas station",
+      "You have been faced with the choice of searching or exiting the gas station",
     options: [
       {
-        text: "Look for food",
+        text: "Search",
         onSelect: lookForFood,
       },
       {
@@ -39,13 +41,28 @@ function intro() {
 
 function lookForFood() {
   let random = Math.random();
-  if (random < 0.4) {
+  if (random < 0.25) {
     zombieEncounter();
-  } else if (random < 0.7) {
+  } else if (random < 0.375) {
     dairyIsle();
-  } else {
+  } else if (random < 0.5) {
     snackAisle();
+  } else if (random < 0.75) {
+    hardwareSection();
+  } else {
+    cooler();
   }
+}
+
+function hardwareSection() {
+  gameState.inventory.push(new LockPick());
+  gameState.display = {
+    type: "info",
+    description: "You discover the hardware section and find a lock pick",
+    onContinue: () => {
+      exitOrStayTheNight(exit);
+    },
+  } as InfoDisplay;
 }
 
 function dairyIsle() {
@@ -54,17 +71,26 @@ function dairyIsle() {
     description:
       "You discover the dairy isle. You need to roll a die to decide what you find",
     onRoll: (dice) => {
-      for (let i = 0; i < dice; i++) {
+      if (dice > 3) {
         gameState.inventory.push(new CondensedMilk());
+        gameState.display = {
+          type: "info",
+          title: "Result",
+          description: `You ended up finding condensed milk`,
+          onContinue: () => {
+            exitOrStayTheNight(exit);
+          },
+        } as InfoDisplay;
+      } else {
+        gameState.display = {
+          type: "info",
+          title: "Result",
+          description: `It appears the cooler was empty`,
+          onContinue: () => {
+            exitOrStayTheNight(exit);
+          },
+        } as InfoDisplay;
       }
-      gameState.display = {
-        type: "info",
-        title: "Result",
-        description: `You ended up finding ${dice} potato(es)`,
-        onContinue: () => {
-          exitOrStayTheNight(exit);
-        },
-      } as InfoDisplay;
     },
   } as D6Display;
 }
@@ -98,6 +124,31 @@ function snackAisle() {
   } as D6Display;
 }
 
+function cooler() {
+  gameState.display = {
+    type: "d6",
+    description:
+      "You discover a cooler. You need to roll a die to decide what you find",
+    onRoll: (die) => {
+      if (die > 4) {
+        gameState.inventory.push(new OrangeSoda());
+        youFound(new OrangeSoda());
+      } else if (die > 2) {
+        gameState.inventory.push(new WaterBottle());
+        youFound(new WaterBottle());
+      } else {
+        gameState.display = {
+          type: "info",
+          description: "The cooler was empty",
+          onContinue: () => {
+            exitOrStayTheNight(exit);
+          },
+        } as InfoDisplay;
+      }
+    },
+  } as D6Display;
+}
+
 function zombieEncounter() {
   gameState.display = {
     type: "multiple_choice",
@@ -122,12 +173,7 @@ function fightZombie() {
     description:
       "You need to roll a die to figure out whether or not you survive the encounter",
     onRoll: (dice) => {
-      if (dice <= 1) {
-        die();
-        return;
-      } else if (dice <= 5) {
-        gameState.health -= dice * 7;
-      }
+      gameState.health -= (6 - dice) * 9;
       exitOrStayTheNight(exit);
     },
   } as D6Display;

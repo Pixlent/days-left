@@ -59,11 +59,11 @@ export function youFound(item: Item) {
 }
 
 export function nextScenario(): IDisplay {
-  const amountOfScenarios = 2;
+  const amountOfScenarios = 3;
   let rand = Math.floor(Math.random() * amountOfScenarios);
 
   if (rand == 0) {
-    return gasStation;
+    return cabin;
   }
-  return cabin;
+  return gasStation;
 }

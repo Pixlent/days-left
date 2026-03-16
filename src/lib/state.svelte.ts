@@ -1,8 +1,6 @@
 import type { IDisplay, InfoDisplay } from "./display/display.svelte";
 import { ChocolateBar, WaterBottle, type Item } from "./item.svelte";
-import { cabin } from "./scenarios/cabin.svelte";
 import { nextScenario } from "./scenarios/common.svelte";
-import { gasStation } from "./scenarios/gasStation.svelte";
 
 export enum AppState {
   LAUNCHER = "LAUNCHER",
@@ -41,8 +39,8 @@ export const gameState = $state({
 
 export function nextDay() {
   gameState.daysSurvived += 1;
-  hydrate((Math.random() * 20 + 30) * -1);
-  eat((Math.random() * 20 + 20) * -1);
+  hydrate((Math.random() * 10 + 20) * -1);
+  eat((Math.random() * 10 + 10) * -1);
 }
 
 export function die() {
@@ -51,7 +49,7 @@ export function die() {
     description:
       "You died. You ended up surviving " + gameState.daysSurvived + " days.",
     onContinue: () => {
-      gameState.display = gasStation;
+      location.reload();
     },
   } as InfoDisplay;
 }
