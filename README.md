@@ -183,7 +183,7 @@ Finally we have the inventory which displays what items you have.
 
 The actual branching story comes from a pretty clever system where we have many functions. Each change what is displayed in the middle of the screen. They set what the different buttons do and those buttons call other functions or even set it to call itself when pressed. This leads to a type of node three which you can navigate by pressing buttons.
 
-![](C:\Users\2behe\Documents\Projects\days-left\scenario-example.png) 
+![](scenario-example.png) 
 
 Here you can see an example of a branching story tree I made. The pipes show what possible scenarios are possible to get out of it and each node maps roughly to one function. in the code.
 
